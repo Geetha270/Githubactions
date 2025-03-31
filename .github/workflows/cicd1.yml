@@ -124,6 +124,8 @@ jobs:
       with:
           push: true
           tags: geetha270/bankapp:latest
+          file: ./Dockerfile
+          
    
       
 
