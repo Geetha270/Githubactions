@@ -126,8 +126,31 @@ jobs:
           push: true
           tags: geetha270/bankapp:latest
           file: ./Dockerfile
-          
-   
-      
+  
+  deploy_to_minikube:
+    runs-on: self-hosted
+    needs: build_docker_image_and_push
+    steps:
+    - uses: actions/checkout@v4
 
-      
+    - name: Ensure Minikube is Running
+      run: |
+        if ! minikube status | grep -q 'Running'; then
+          minikube start --driver=docker
+        fi
+
+    - name: Configure kubectl for Minikube
+      run: |
+        kubectl config use-context minikube
+        kubectl cluster-info
+
+    - name: Deploy to Minikube
+      run: |
+        kubectl apply -f ds.yml
+
+    - name: Verify Deployment
+      run: |
+        kubectl get pods
+        kubectl get services
+
+  
